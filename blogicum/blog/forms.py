@@ -1,8 +1,8 @@
-from django.utils.timezone import now, localtime
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.timezone import localtime, now
 
-from .models import Post, User, Comment
+from .models import Comment, Post, User
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -12,6 +12,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class PostForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['pub_date'].initial = localtime(
@@ -36,19 +37,18 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email',)
         exclude = ('password',)
 
 
-class CommentsForm(forms.ModelForm):
+class CommentForm(forms.ModelForm):
 
     class Meta:
         model = Comment
         fields = ('text',)
-
-
-class CommentsEditForm(forms.ModelForm):
-
-    class Meta:
-        model = Comment
-        fields = ('text',)
+        widgets = {
+            'text': forms.Textarea
+            (attrs={
+                'rows': 3,
+            }
+            )
+        }

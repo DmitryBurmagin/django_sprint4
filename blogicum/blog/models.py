@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
+from django.urls import reverse
 from django_cleanup import cleanup
-
 
 User = get_user_model()
 
@@ -9,8 +9,6 @@ User = get_user_model()
 class PublishedModel(models.Model):
     is_published = models.BooleanField(
         default=True,
-        blank=False,
-        null=False,
         verbose_name='Опубликовано',
         help_text='Снимите галочку, чтобы скрыть публикацию.'
     )
@@ -23,6 +21,22 @@ class PublishedModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class Location(PublishedModel):
+    name = models.CharField(
+        max_length=256,
+        blank=False,
+        null=False,
+        verbose_name='Название места'
+    )
+
+    class Meta:
+        verbose_name = 'местоположение'
+        verbose_name_plural = 'Местоположения'
+
+    def __str__(self) -> str:
+        return self.name[:20]
 
 
 @cleanup.select
@@ -53,7 +67,7 @@ class Post(PublishedModel):
         verbose_name='Автор публикации'
     )
     location = models.ForeignKey(
-        'Location',
+        Location,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -74,9 +88,14 @@ class Post(PublishedModel):
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
+        default_related_name = "posts"
+        ordering = ("-pub_date",)
 
     def __str__(self):
-        return self.title
+        return (f'{self.title[:20]} | {self.text[:30]}')
+
+    def get_absolute_url(self):
+        return reverse("blog:post_detail", kwargs={"post_id": self.pk})
 
 
 class Category(PublishedModel):
@@ -105,23 +124,7 @@ class Category(PublishedModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
-        return self.title
-
-
-class Location(PublishedModel):
-    name = models.CharField(
-        max_length=256,
-        blank=False,
-        null=False,
-        verbose_name='Название места'
-    )
-
-    class Meta:
-        verbose_name = 'местоположение'
-        verbose_name_plural = 'Местоположения'
-
-    def __str__(self) -> str:
-        return self.name
+        return self.title[:20]
 
 
 class Comment(models.Model):
@@ -129,13 +132,11 @@ class Comment(models.Model):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='comments',
         verbose_name='Пост',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='comments',
         verbose_name='Автор комментария'
     )
     created_at = models.DateTimeField(
@@ -150,4 +151,4 @@ class Comment(models.Model):
         ordering = ("created_at",)
 
     def __str__(self):
-        return f"Комментарий пользователя {self.author}"
+        return f"Комментарий автора {self.author} к посту {self.post}"
