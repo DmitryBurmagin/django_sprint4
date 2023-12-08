@@ -23,14 +23,14 @@ class PostForm(forms.ModelForm):
         model = Post
         exclude = ('author',)
         widgets = {
-            'pub_date': forms.DateTimeInput
-            (attrs={
-                'type': 'datetime-local',
-                'class': 'form-control',
-                'format': '%Y-%m-%dT%H:%M',
+            'pub_date': forms.DateTimeInput(
+                attrs={
+                    'type': 'datetime-local',
+                    'class': 'form-control',
+                    'format': '%Y-%m-%dT%H:%M',
+                    }
+                )
             }
-            )
-        }
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -46,9 +46,9 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ('text',)
         widgets = {
-            'text': forms.Textarea
-            (attrs={
-                'rows': 3,
+            'text': forms.Textarea(
+                attrs={
+                    'rows': 3,
+                    }
+                )
             }
-            )
-        }

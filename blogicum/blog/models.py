@@ -3,6 +3,11 @@ from django.db import models
 from django.urls import reverse
 from django_cleanup import cleanup
 
+
+LIMIT_HEADER = 20
+LIMIT_TEXT = 30
+
+
 User = get_user_model()
 
 
@@ -13,8 +18,6 @@ class PublishedModel(models.Model):
         help_text='Снимите галочку, чтобы скрыть публикацию.'
     )
     created_at = models.DateTimeField(
-        blank=False,
-        null=False,
         auto_now_add=True,
         verbose_name='Добавлено'
     )
@@ -26,8 +29,6 @@ class PublishedModel(models.Model):
 class Location(PublishedModel):
     name = models.CharField(
         max_length=256,
-        blank=False,
-        null=False,
         verbose_name='Название места'
     )
 
@@ -36,25 +37,19 @@ class Location(PublishedModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self) -> str:
-        return self.name[:20]
+        return self.name[:LIMIT_HEADER]
 
 
 @cleanup.select
 class Post(PublishedModel):
     title = models.CharField(
         max_length=256,
-        blank=False,
-        null=False,
         verbose_name='Заголовок'
     )
     text = models.TextField(
-        blank=False,
-        null=False,
         verbose_name='Текст'
     )
     pub_date = models.DateTimeField(
-        blank=False,
-        null=False,
         verbose_name='Дата и время публикации',
         help_text=('Если установить дату и время в будущем — можно делать '
                    'отложенные публикации.')
@@ -62,8 +57,6 @@ class Post(PublishedModel):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
         verbose_name='Автор публикации'
     )
     location = models.ForeignKey(
@@ -76,7 +69,6 @@ class Post(PublishedModel):
     category = models.ForeignKey(
         'Category',
         on_delete=models.SET_NULL,
-        blank=False,
         null=True,
         verbose_name='Категория'
     )
@@ -92,7 +84,7 @@ class Post(PublishedModel):
         ordering = ("-pub_date",)
 
     def __str__(self):
-        return (f'{self.title[:20]} | {self.text[:30]}')
+        return (f'{self.title[:LIMIT_HEADER]} | {self.text[:LIMIT_TEXT]}')
 
     def get_absolute_url(self):
         return reverse("blog:post_detail", kwargs={"post_id": self.pk})
@@ -101,19 +93,13 @@ class Post(PublishedModel):
 class Category(PublishedModel):
     title = models.CharField(
         max_length=256,
-        blank=False,
-        null=False,
         verbose_name='Заголовок'
     )
     description = models.TextField(
-        blank=False,
-        null=False,
         verbose_name='Описание'
     )
     slug = models.SlugField(
         unique=True,
-        blank=False,
-        null=False,
         verbose_name='Идентификатор',
         help_text=('Идентификатор страницы для URL; разрешены символы '
                    'латиницы, цифры, дефис и подчёркивание.')
@@ -124,7 +110,7 @@ class Category(PublishedModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
-        return self.title[:20]
+        return self.title[:LIMIT_HEADER]
 
 
 class Comment(models.Model):

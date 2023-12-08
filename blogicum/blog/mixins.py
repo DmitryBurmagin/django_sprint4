@@ -12,10 +12,12 @@ class PostMixin:
     pk_url_kwarg = 'post_id'
 
 
-class PostDelMixin:
+class EditMixin:
 
     def dispatch(self, request, *args, **kwargs):
         post = super().get_object()
+        if not request.user.is_authenticated:
+            return redirect('login')
         if post.author != self.request.user:
             return redirect('blog:post_detail', self.kwargs['post_id'])
         return super().dispatch(request, *args, **kwargs)
@@ -36,11 +38,3 @@ class CommentMixin:
         return reverse(
             'blog:post_detail', kwargs={'post_id': self.kwargs['post_id']}
         )
-
-
-class CommentDelMixin:
-    def dispatch(self, request, *args, **kwargs):
-        comment = super().get_object()
-        if comment.author != self.request.user:
-            return redirect('blog:post_detail', self.kwargs['post_id'])
-        return super().dispatch(request, *args, **kwargs)

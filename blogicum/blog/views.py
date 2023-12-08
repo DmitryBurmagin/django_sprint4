@@ -11,7 +11,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from blogicum.settings import EMAIL_ADRESS
 
 from .forms import CommentForm, UserUpdateForm
-from .mixins import CommentDelMixin, CommentMixin, PostDelMixin, PostMixin
+from .mixins import CommentMixin, PostMixin, EditMixin
 from .models import Category, Post, User
 from .utils import filter_published_posts, get_unfiltred_post
 
@@ -99,21 +99,11 @@ class BlogPostDetail(DetailView):
         return context
 
 
-class BlogPostEdit(LoginRequiredMixin, PostMixin, UpdateView):
-
-    def dispatch(self, request, *args, **kwargs):
-        post = super().get_object()
-        if post.author != self.request.user:
-            return redirect('blog:post_detail', self.kwargs['post_id'])
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse(
-            'blog:post_detail',
-            kwargs={'post_id': self.kwargs['post_id']})
+class BlogPostEdit(LoginRequiredMixin, PostMixin, EditMixin, UpdateView):
+    pass
 
 
-class BlogPostDelete(LoginRequiredMixin, PostDelMixin, PostMixin, DeleteView):
+class BlogPostDelete(LoginRequiredMixin, EditMixin, PostMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -130,17 +120,11 @@ class BlogCommentAdd(LoginRequiredMixin, CommentMixin, CreateView):
     pass
 
 
-class BlogCommentEdit(LoginRequiredMixin, CommentMixin, UpdateView):
-
-    def dispatch(self, request, *args, **kwargs):
-        comment = super().get_object()
-        if comment.author != self.request.user:
-            return redirect('blog:post_detail', self.kwargs['post_id'])
-        return super().dispatch(request, *args, **kwargs)
+class BlogCommentEdit(LoginRequiredMixin, CommentMixin, EditMixin, UpdateView):
+    pass
 
 
-class BlogCommentDelete(LoginRequiredMixin, CommentDelMixin, CommentMixin,
-                        DeleteView):
+class BlogCommentDelete(LoginRequiredMixin, EditMixin, CommentMixin, DeleteView):
     pass
 
 
