@@ -59,13 +59,13 @@ urlpatterns = [
         name='category_posts'
     ),
     path(
+        'profile/edit/',
+        views.ProfileEditView.as_view(),
+        name='edit_profile'
+    ),
+    path(
         'profile/<str:username>/',
         views.ProfileDetailView.as_view(),
         name='profile'
-    ),
-    path(
-        'profile/<str:username>/edit/',
-        views.ProfileEditView.as_view(),
-        name='edit_profile'
     ),
 ]

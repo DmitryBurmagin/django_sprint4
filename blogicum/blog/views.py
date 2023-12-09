@@ -31,11 +31,11 @@ class BlogCategoryPosts(ListView):
             slug=slug,
             is_published=True
         )
-        return super().get_queryset().filter(
+        return get_unfiltred_post().filter(
             category=self.category,
             is_published=True,
             pub_date__lte=timezone.now()
-        ).annotate(comment_count=Count('comments'))
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,8 +99,9 @@ class BlogPostDetail(DetailView):
         return context
 
 
-class BlogPostEdit(LoginRequiredMixin, PostMixin, EditMixin, UpdateView):
+class BlogPostEdit(EditMixin, PostMixin, UpdateView):
     pass
+
 
 
 class BlogPostDelete(LoginRequiredMixin, EditMixin, PostMixin, DeleteView):
