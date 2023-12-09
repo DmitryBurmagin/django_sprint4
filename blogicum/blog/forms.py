@@ -28,9 +28,9 @@ class PostForm(forms.ModelForm):
                     'type': 'datetime-local',
                     'class': 'form-control',
                     'format': '%Y-%m-%dT%H:%M',
-                    }
-                )
-            }
+                }
+            )
+        }
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -49,6 +49,6 @@ class CommentForm(forms.ModelForm):
             'text': forms.Textarea(
                 attrs={
                     'rows': 3,
-                    }
-                )
-            }
+                }
+            )
+        }

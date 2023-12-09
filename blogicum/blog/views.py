@@ -1,8 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
-from django.db.models import Count
 from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
@@ -11,7 +10,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from blogicum.settings import EMAIL_ADRESS
 
 from .forms import CommentForm, UserUpdateForm
-from .mixins import CommentMixin, PostMixin, EditMixin
+from .mixins import CommentMixin, EditMixin, PostMixin
 from .models import Category, Post, User
 from .utils import filter_published_posts, get_unfiltred_post
 
@@ -103,7 +102,6 @@ class BlogPostEdit(EditMixin, PostMixin, UpdateView):
     pass
 
 
-
 class BlogPostDelete(LoginRequiredMixin, EditMixin, PostMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
@@ -125,7 +123,8 @@ class BlogCommentEdit(LoginRequiredMixin, CommentMixin, EditMixin, UpdateView):
     pass
 
 
-class BlogCommentDelete(LoginRequiredMixin, EditMixin, CommentMixin, DeleteView):
+class BlogCommentDelete(LoginRequiredMixin, EditMixin, CommentMixin,
+                        DeleteView):
     pass
 
 

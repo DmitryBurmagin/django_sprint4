@@ -3,7 +3,6 @@ from django.db import models
 from django.urls import reverse
 from django_cleanup import cleanup
 
-
 LIMIT_HEADER = 20
 LIMIT_TEXT = 30
 

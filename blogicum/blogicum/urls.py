@@ -22,12 +22,11 @@ urlpatterns = [
         name='registration',
     ),
     path('auth/', include('django.contrib.auth.urls'), name='login'),
-    path('', include('blog.urls', namespace='blog')),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += (path('__debug__/', include(debug_toolbar.urls)),) 
+    urlpatterns += (path('__debug__/', include(debug_toolbar.urls)),)
 
     urlpatterns += static(
         settings.MEDIA_URL,

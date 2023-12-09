@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
-
 from .forms import CommentForm, PostForm
 from .models import Comment, Post
 
